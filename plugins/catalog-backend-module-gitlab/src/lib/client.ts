@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import fetch, { RequestInit, Response } from 'node-fetch';
-import { merge } from 'lodash';
 import {
   getGitLabRequestOptions,
   GitLabIntegrationConfig,
 } from '@backstage/integration';
+import { merge } from 'lodash';
+import fetch, { RequestInit, Response } from 'node-fetch';
 import { Logger } from 'winston';
+import { GitLabProjectResponse } from './types';
 
 export type ListOptions = {
   [key: string]: string | number | boolean | undefined;
@@ -52,7 +53,9 @@ export class GitLabClient {
     return this.config.host !== 'gitlab.com';
   }
 
-  async listProjects(options?: ListOptions): Promise<PagedResponse<any>> {
+  async listProjects(
+    options?: ListOptions,
+  ): Promise<PagedResponse<GitLabProjectResponse>> {
     if (options?.group) {
       return this.pagedRequest(
         `/groups/${encodeURIComponent(options?.group)}/projects`,
@@ -99,7 +102,7 @@ export class GitLabClient {
    *
    * This method can be used to perform authenticated calls to any GitLab
    * endpoint against the configured GitLab instance. The underlying response is
-   * returned from fetch without modiication. Request options can be overriden
+   * returned from fetch without modification. Request options can be overridden
    * as they are merged to produce the final values; passed in values take
    * precedence.
    *
